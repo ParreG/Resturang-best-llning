@@ -2,7 +2,7 @@
 {
     public class ResturantPA
     {
-        public async Task<int> takeOrder()
+        public async Task takeOrder()
         {
             string[] food = new string[3] { "God Pasta", "WOW Burgare", "Best Pizza" };
 
@@ -35,39 +35,42 @@
             }
             order -= 1;
             Console.WriteLine($"Du har valt: {food[order]}");
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
             Console.WriteLine("Din mat förbreds.");
             Console.WriteLine();
-
-            return order;
-        }
-
-        public async Task Cook()
-        {
             Console.Write("Ange namn för beställningen: ");
             string? name = Console.ReadLine();
+            Order newOrder=null;
 
-            int order = await takeOrder();
-
-            await Task.Run(async () =>
+            if (order == 0)
             {
-                if (order == 0)
-                {
-                    PastaOrder pastaOrder = new PastaOrder(name, "Pasta Carbonara", 20, false);
-                    await pastaOrder.Coock();
-                }
-                else if (order == 1)
-                {
-                    BurgarOrder burgarOrder = new BurgarOrder(name, "Cheezy Burger Cheeze", 10, false);
-                    await burgarOrder.Coock();
-                }
-                else if (order == 2)
-                {
-                    PizzaOrder pizzaOrder = new PizzaOrder(name, "Kebabbig PIZZA", 20, false);
-                    await pizzaOrder.Coock();
-                }
-            });
+                newOrder = new PastaOrder(name, "Pasta Carbonara", 20, false);         
+            }
+            else if (order == 1)
+            {
+                newOrder = new BurgarOrder(name, "Cheezy Burger Cheeze", 10, false);
+            }
+            else if (order == 2)
+            {
+                newOrder = new PizzaOrder(name, "Kebabbig PIZZA", 20, false);
+            }
 
+            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationToken token = cts.Token;
+
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                /* run your code here */
+                Cook(newOrder, cts);
+            }).Start();
+
+        }
+
+        public async Task Cook(Order order, CancellationTokenSource cts)
+        {
+           await order.Coock();
+           cts.Cancel();
         }
     }
 

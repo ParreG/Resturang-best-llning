@@ -11,13 +11,13 @@ namespace Resturang_beställning
         public PizzaOrder(string orderName, string dishName, int cookingTime, bool delivery) : 
             base(orderName, dishName, cookingTime, delivery)
         {
-
+            Console.WriteLine($"Nu lagas {DishName}. Det tar {CookingTime} sekunder.");
         }
 
-        public async Task Coock()
-        {
-            Console.WriteLine($"Nu lagas {DishName}. Det tar {CookingTime} sekunder.");
-            await Task.Delay(CookingTime * 1000);
+        public override async Task Coock()
+        {        
+           
+            Thread.Sleep(CookingTime * 1000);
             Console.WriteLine($"{OrderName}, din mat {DishName} är klar och serveras. Smaklig måltid.");
         }
     }

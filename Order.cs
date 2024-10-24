@@ -25,7 +25,6 @@ namespace Resturang_beställning
             
         }
 
-        
-
+        public abstract Task Coock();
     }
 }
